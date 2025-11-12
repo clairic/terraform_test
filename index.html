@@ -3,39 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Terraform App</title>
+    <title>My Game Collection</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         .container {
-            text-align: center;
+            width: 100%;
+            max-width: 800px;
             padding: 40px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             backdrop-filter: blur(10px);
         }
         h1 {
-            font-size: 3em;
+            font-size: 2.5em;
             margin-bottom: 20px;
+            text-align: center;
         }
-        p {
-            font-size: 1.2em;
+        .subtitle {
+            font-size: 1em;
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .input-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: 2px solid #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .table-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        .delete-btn {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            background: rgba(255, 50, 50, 0.8);
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+        }
+        .delete-btn:hover {
+            background: rgba(255, 50, 50, 1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Hello from Azure!</h1>
-        <p>Deployed with Terraform</p>
-        <p>✨ Your app is running successfully! ✨</p>
+        <h1>🎮 My Game Collection</h1>
+        <p class="subtitle">Deployed with Terraform on Azure</p>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="gameName">Game Name</label>
+                <input type="text" id="gameName" placeholder="Enter game name...">
+            </div>
+            <div class="input-group">
+                <label for="gameStudio">Game Studio</label>
+                <input type="text" id="gameStudio" placeholder="Enter game studio...">
+            </div>
+            <button onclick="addGame()">Add Game</button>
+        </div>
+
+        <div class="table-section">
+            <table id="gamesTable">
+                <thead>
+                    <tr>
+                        <th>Game Name</th>
+                        <th>Studio</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="gamesTableBody">
+                    <tr>
+                        <td colspan="3" class="empty-state">No games added yet. Start by adding your first game!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <script>
+        let games = [];
+
+        function addGame() {
+            const gameName = document.getElementById('gameName').value.trim();
+            const gameStudio = document.getElementById('gameStudio').value.trim();
+
+            if (gameName === '' || gameStudio === '') {
+                alert('Please fill in both fields!');
+                return;
+            }
+
+            games.push({
+                name: gameName,
+                studio: gameStudio
+            });
+
+            document.getElementById('gameName').value = '';
+            document.getElementById('gameStudio').value = '';
+            
+            updateTable();
+        }
+
+        function deleteGame(index) {
+            games.splice(index, 1);
+            updateTable();
+        }
+
+        function updateTable() {
+            const tableBody = document.getElementById('gamesTableBody');
+            
+            if (games.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="3" class="empty-state">No games added yet. Start by adding your first game!</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            games.forEach((game, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${game.name}</td>
+                    <td>${game.studio}</td>
+                    <td><button class="delete-btn" onclick="deleteGame(${index})">Delete</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('gameName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addGame();
+        });
+        document.getElementById('gameStudio').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addGame();
+        });
+    </script>
 </body>
 </html>

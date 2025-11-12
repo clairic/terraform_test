@@ -26,6 +26,7 @@ module "network" {
 
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
+
 }
 
 # Call the web_app module
@@ -38,4 +39,13 @@ module "web_app" {
   resource_group_name   = azurerm_resource_group.rg.name
   app_service_plan_id   = module.web_app.app_service_plan_id
   subnet_id             = module.network.webapp_subnet_id
+}
+
+# Call the sql module 
+module "sql" {
+  source = "./modules/sql"
+
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+    
 }

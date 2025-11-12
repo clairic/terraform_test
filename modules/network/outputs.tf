@@ -12,3 +12,12 @@ output "network_security_group_id" {
   description = "The ID of the Network Security Group"
   value       = azurerm_network_security_group.nsg.id
 }
+output "sql_subnet_id" {
+  description = "The ID of the SQL Subnet"
+  value       = azurerm_subnet.sql_subnet.id
+}
+output "private_endpoint_subnet_id" {
+  description = "The ID of the Private Endpoint Subnet"
+  value       = azurerm_subnet.private_endpoint_subnet.id
+}
+

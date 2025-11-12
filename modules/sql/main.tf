@@ -6,28 +6,12 @@ resource "azurerm_mssql_server" "sqlserver" {
   version                      = "12.0"
   administrator_login          = "sqladminuser"
   administrator_login_password = "P@$$w0rd12345"
-  public_network_access_enabled = true
+  public_network_access_enabled = false
 
   tags = {
     environment = "Terraform getting started"
     location    = "northeurope"
   }
-}
-
-# Allow Azure services to access the SQL server
-resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
-  name             = "AllowAzureServices"
-  server_id        = azurerm_mssql_server.sqlserver.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
-}
-
-# Allow all public IPs for testing (remove this in production!)
-resource "azurerm_mssql_firewall_rule" "allow_all_ips" {
-  name             = "AllowAllIPs"
-  server_id        = azurerm_mssql_server.sqlserver.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "255.255.255.255"
 }
 
 resource "azurerm_storage_account" "sqlstorage" {

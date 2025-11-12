@@ -15,7 +15,16 @@ resource "azurerm_app_service" "rg" {
   app_service_plan_id = var.app_service_plan_id
 
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "SQL_USER"                       = var.sql_admin_username
+    "SQL_PASSWORD"                   = var.sql_admin_password
+    "SQL_SERVER"                     = var.sql_server_fqdn
+    "SQL_DATABASE"                   = var.sql_database_name
+  }
+
+  site_config {
+    linux_fx_version = "NODE|18-lts"
+    app_command_line = "npm install && node server.js"
   }
 
   connection_string {

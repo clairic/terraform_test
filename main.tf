@@ -20,7 +20,15 @@ resource "azurerm_resource_group" "rg" {
   location = "northeurope"
 }
 
-#Call the web_app module
+# Call the network module
+module "network" {
+  source = "./modules/network"
+
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+# Call the web_app module
 module "web_app" {
   source = "./modules/web_app"
 
@@ -29,4 +37,5 @@ module "web_app" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   app_service_plan_id   = module.web_app.app_service_plan_id
+  subnet_id             = module.network.webapp_subnet_id
 }

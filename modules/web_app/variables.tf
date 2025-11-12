@@ -28,3 +28,7 @@ variable "app_service_plan_id"{
     description = "The ID of the App Service Plan"
     type = string
 }
+variable "subnet_id" {
+    description = "The ID of the subnet for VNet integration"
+    type = string
+}

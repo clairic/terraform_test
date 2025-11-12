@@ -29,6 +29,23 @@ variable "app_service_plan_id"{
     type = string
 }
 variable "subnet_id" {
-    description = "The ID of the subnet for VNet integration"
-    type = string
+  description = "The ID of the subnet for VNet integration"
+  type        = string
+}
+variable "sql_server_fqdn" {
+  description = "The fully qualified domain name of the SQL Server"
+  type        = string
+}
+variable "sql_database_name" {
+  description = "The name of the SQL Database"
+  type        = string
+}
+variable "sql_admin_username" {
+  description = "The SQL Server administrator username"
+  type        = string
+}
+variable "sql_admin_password" {
+  description = "The SQL Server administrator password"
+  type        = string
+  sensitive   = true
 }

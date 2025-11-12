@@ -17,6 +17,12 @@ resource "azurerm_app_service" "rg" {
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
   }
+
+  connection_string {
+    name  = "DefaultConnection"
+    type  = "SQLAzure"
+    value = "Server=tcp:${var.sql_server_fqdn},1433;Initial Catalog=${var.sql_database_name};Persist Security Info=False;User ID=${var.sql_admin_username};Password=${var.sql_admin_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  }
 }
 
 # VNet Integration for the App Service

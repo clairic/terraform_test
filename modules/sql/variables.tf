@@ -3,6 +3,14 @@ variable "resource_group_name" {
   type        = string
 }
 variable "location" {
-    description = "Location of the SQL resources"
-    type = string 
+  description = "Location of the SQL resources"
+  type        = string
+}
+variable "private_endpoint_subnet_id" {
+  description = "The ID of the subnet for private endpoints"
+  type        = string
+}
+variable "virtual_network_id" {
+  description = "The ID of the Virtual Network"
+  type        = string
 }

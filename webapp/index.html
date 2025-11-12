@@ -159,9 +159,21 @@
     </div>
 
     <script>
-        let games = [];
+        // Load games when page loads
+        window.addEventListener('DOMContentLoaded', loadGames);
 
-        function addGame() {
+        async function loadGames() {
+            try {
+                const response = await fetch('/api/games');
+                const games = await response.json();
+                updateTable(games);
+            } catch (error) {
+                console.error('Error loading games:', error);
+                alert('Failed to load games from database');
+            }
+        }
+
+        async function addGame() {
             const gameName = document.getElementById('gameName').value.trim();
             const gameStudio = document.getElementById('gameStudio').value.trim();
 
@@ -170,23 +182,53 @@
                 return;
             }
 
-            games.push({
-                name: gameName,
-                studio: gameStudio
-            });
+            try {
+                const response = await fetch('/api/games', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: gameName,
+                        studio: gameStudio
+                    })
+                });
 
-            document.getElementById('gameName').value = '';
-            document.getElementById('gameStudio').value = '';
-            
-            updateTable();
+                if (response.ok) {
+                    document.getElementById('gameName').value = '';
+                    document.getElementById('gameStudio').value = '';
+                    loadGames(); // Reload the table
+                } else {
+                    alert('Failed to add game');
+                }
+            } catch (error) {
+                console.error('Error adding game:', error);
+                alert('Failed to add game to database');
+            }
         }
 
-        function deleteGame(index) {
-            games.splice(index, 1);
-            updateTable();
+        async function deleteGame(id) {
+            if (!confirm('Are you sure you want to delete this game?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/games/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadGames(); // Reload the table
+                } else {
+                    alert('Failed to delete game');
+                }
+            } catch (error) {
+                console.error('Error deleting game:', error);
+                alert('Failed to delete game from database');
+            }
         }
 
-        function updateTable() {
+        function updateTable(games) {
             const tableBody = document.getElementById('gamesTableBody');
             
             if (games.length === 0) {
@@ -195,12 +237,12 @@
             }
 
             tableBody.innerHTML = '';
-            games.forEach((game, index) => {
+            games.forEach((game) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${game.name}</td>
-                    <td>${game.studio}</td>
-                    <td><button class="delete-btn" onclick="deleteGame(${index})">Delete</button></td>
+                    <td>${game.GameName}</td>
+                    <td>${game.Studio}</td>
+                    <td><button class="delete-btn" onclick="deleteGame(${game.Id})">Delete</button></td>
                 `;
                 tableBody.appendChild(row);
             });

@@ -4,9 +4,9 @@ resource "azurerm_mssql_server" "sqlserver" {
   resource_group_name          = var.resource_group_name
   location                     = var.location
   version                      = "12.0"
-  administrator_login          = "sqladminuser"
-  administrator_login_password = "P@$$w0rd12345"
-  public_network_access_enabled = false
+  administrator_login          = var.sql_admin_username
+  administrator_login_password = var.sql_admin_password
+  public_network_access_enabled = true  # Enabled for testing
 
   tags = {
     environment = "Terraform getting started"
@@ -30,6 +30,14 @@ resource "azurerm_mssql_database" "sqldatabase" {
     environment = "Terraform getting started"
     location    = var.location
   }
+}
+
+# Firewall rule to allow all IP addresses for testing
+resource "azurerm_mssql_firewall_rule" "allow_my_ip" {
+  name             = "AllowAllIPs"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "255.255.255.255"
 }
 
 # Create Private DNS Zone for SQL Server

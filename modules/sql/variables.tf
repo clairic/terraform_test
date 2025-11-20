@@ -14,3 +14,12 @@ variable "virtual_network_id" {
   description = "The ID of the Virtual Network"
   type        = string
 }
+variable "sql_admin_username" {
+  description = "The SQL Server administrator username"
+  type        = string
+}
+variable "sql_admin_password" {
+  description = "The SQL Server administrator password"
+  type        = string
+  sensitive   = true
+}

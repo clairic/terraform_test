@@ -33,13 +33,25 @@ resource "azurerm_resource_group" "rg" {
   location = "northeurope"
 }
 
+# Call the network module first to get subnet and VNet IDs
+module "network" {
+  source = "./modules/network"
+
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
 #Call the keyvault module
 module "keyvault" {
   source = "./modules/keyvault"
 
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  object_id           = data.external.current_user_object_id.result.object_id
+  location                   = azurerm_resource_group.rg.location
+  resource_group_name        = azurerm_resource_group.rg.name
+  object_id                  = data.external.current_user_object_id.result.object_id
+  private_endpoint_subnet_id = module.network.private_endpoint_subnet_id
+  virtual_network_id         = module.network.virtual_network_id
+
+  depends_on = [module.network]
 }
 
 # Generate random SQL admin username
@@ -78,15 +90,6 @@ resource "azurerm_key_vault_secret" "sql_password" {
   key_vault_id = module.keyvault.azurerm_key_vault_id
 
   depends_on = [module.keyvault]
-}
-
-# Call the network module
-module "network" {
-  source = "./modules/network"
-
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
 }
 
 # Call the sql module 

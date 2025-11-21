@@ -9,7 +9,7 @@ resource "azurerm_key_vault" "keyvault" {
   sku_name                    = "standard"
   soft_delete_retention_days  = 7
   
-  # Enable network rules to restrict access to private endpoint
+  # Deny public access - only allow private endpoint
   network_acls {
     default_action             = "Deny"
     bypass                     = "AzureServices"
@@ -28,7 +28,8 @@ resource "azurerm_key_vault" "keyvault" {
       "Delete",
       "Recover",
       "Backup",
-      "Restore"
+      "Restore",
+      "Purge"
     ]
   }
 
